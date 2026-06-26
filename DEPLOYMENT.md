@@ -1,6 +1,25 @@
 # GitHub Pages Deployment
 
-This project is prepared for GitHub Pages deployment.
+This project is deployed with GitHub Pages.
+
+Repository:
+
+```text
+https://github.com/kraikunsteam-crypto/content-dashboard
+```
+
+Live dashboard:
+
+```text
+https://kraikunsteam-crypto.github.io/content-dashboard/
+```
+
+Latest verified deploy:
+
+```text
+GitHub Actions run 28223941633
+Commit fa525aa Enable Pages during deployment
+```
 
 ## What Gets Deployed
 
@@ -42,6 +61,12 @@ Required repository setting:
 Settings -> Pages -> Build and deployment -> Source: GitHub Actions
 ```
 
+This has already been enabled for the current GitHub repository with:
+
+```powershell
+gh api repos/kraikunsteam-crypto/content-dashboard/pages -X POST -f build_type=workflow
+```
+
 ## Local Preview
 
 Run from `content-dashboard/`:
@@ -59,22 +84,31 @@ http://localhost:5177
 The runner uses Node.js when available. If Node.js is missing, it starts the
 PowerShell fallback preview server.
 
-## Current Blocker For Actual Push
+## Current Git State
 
-This machine currently has no usable `git` or `gh` command in PATH, and the
-local `.git` folder has no `config` or remote. The project is deploy-ready, but
-it still must be pushed to a GitHub repository from a machine/session with Git
-installed and authenticated.
-
-Suggested commands once Git is available:
+Remote:
 
 ```powershell
-git init
-git add .
-git commit -m "Prepare content dashboard for GitHub Pages"
-git branch -M main
-git remote add origin https://github.com/<owner>/<repo>.git
-git push -u origin main
+origin https://github.com/kraikunsteam-crypto/content-dashboard.git
 ```
 
-After the push, enable GitHub Pages with GitHub Actions as the source.
+Branch:
+
+```powershell
+main tracks origin/main
+```
+
+Use this to deploy a new change:
+
+```powershell
+git add .
+git commit -m "Describe the change"
+git push
+```
+
+If Git reports dubious ownership on this Windows folder, run Git with the local
+safe-directory override:
+
+```powershell
+git -c safe.directory="E:/New folder (3)" push
+```

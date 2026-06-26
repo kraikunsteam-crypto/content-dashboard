@@ -90,7 +90,19 @@ This project includes a GitHub Actions workflow for GitHub Pages:
 ```
 
 The deployed static dashboard uses `content-dashboard/data/sample-facebook-scan.json`.
-See [DEPLOYMENT.md](DEPLOYMENT.md) for setup and push notes.
+Live URL:
+
+```text
+https://kraikunsteam-crypto.github.io/content-dashboard/
+```
+
+GitHub repository:
+
+```text
+https://github.com/kraikunsteam-crypto/content-dashboard
+```
+
+See [DEPLOYMENT.md](DEPLOYMENT.md) for deploy and push notes.
 
 ## AGT Skills
 

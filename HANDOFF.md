@@ -47,15 +47,32 @@ source Facebook post buttons.
 Current data is local-file based. Production Google Sheets sync is not connected
 yet.
 
-GitHub Pages deployment files are prepared:
+GitHub repository:
+
+```text
+https://github.com/kraikunsteam-crypto/content-dashboard
+```
+
+GitHub Pages live dashboard:
+
+```text
+https://kraikunsteam-crypto.github.io/content-dashboard/
+```
+
+GitHub Pages deployment files:
 
 ```text
 .github/workflows/deploy-pages.yml
 DEPLOYMENT.md
 ```
 
-Actual push/deploy still requires Git/GitHub authentication on the machine that
-will publish the repository.
+Current deployment status:
+
+```text
+Deployed successfully through GitHub Actions run 28223941633.
+Latest pushed commit: fa525aa Enable Pages during deployment.
+Branch main tracks origin/main.
+```
 
 ## Runtime Flow
 
