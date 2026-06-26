@@ -1,0 +1,37 @@
+{
+  "scanned_at": "2026-06-25T15:03:49.503Z",
+  "window": "Facebook labels <= 3 days; exact Thai dates since 2026-06-22 Asia/Bangkok",
+  "rows": [],
+  "statuses": [
+    {
+      "channel_id": "CH-001",
+      "product": "Mister Save",
+      "brand": "B - one",
+      "url": "https://www.facebook.com/mintana2018/?locale=th_TH",
+      "status": "ok",
+      "recent_posts": 0,
+      "visible_articles": 0,
+      "note": ""
+    },
+    {
+      "channel_id": "CH-002",
+      "product": "Mister Save",
+      "brand": "Dreammy",
+      "url": "https://www.facebook.com/CoffeeDreamyTH/?locale=th_TH",
+      "status": "ok",
+      "recent_posts": 0,
+      "visible_articles": 1,
+      "note": ""
+    },
+    {
+      "channel_id": "CH-003",
+      "product": "Mister Save",
+      "brand": "Nestle",
+      "url": "https://www.facebook.com/NestleThailand/",
+      "status": "ok",
+      "recent_posts": 0,
+      "visible_articles": 0,
+      "note": ""
+    }
+  ]
+}

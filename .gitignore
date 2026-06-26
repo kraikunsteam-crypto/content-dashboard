@@ -1,0 +1,13 @@
+node_modules/
+*.log
+
+# Generated scan/report artifacts
+outputs/facebook-content-scan/node_modules/
+outputs/facebook-content-scan/*.xlsx
+outputs/facebook-content-scan/*.png
+outputs/facebook-content-scan/*.inspect.ndjson
+outputs/facebook-content-scan/workbook_inspect.ndjson
+
+# OS/editor noise
+.DS_Store
+Thumbs.db

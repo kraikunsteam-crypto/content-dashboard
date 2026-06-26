@@ -1,0 +1,162 @@
+<!doctype html>
+<html lang="th">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Content Intelligence Dashboard</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <aside class="sidebar">
+      <div class="brand">
+        <span class="brand-mark">C</span>
+        <div>
+          <strong>Content OS</strong>
+          <small>Facebook competitor scan</small>
+        </div>
+      </div>
+
+      <nav class="nav" aria-label="Dashboard sections">
+        <a href="#overview" class="active">ภาพรวม</a>
+        <a href="#top-content">Top 5 คอนเทนต์</a>
+        <a href="#competitors">ติดตามคู่แข่ง</a>
+        <a href="#hooks">Hook เด็ด</a>
+        <a href="#ideas">ไอเดียที่ควรทำ</a>
+        <a href="#database">Database</a>
+      </nav>
+
+      <div class="source-box">
+        <span>DATA FLOW</span>
+        <strong>Frontend -> API -> Google Sheets</strong>
+      </div>
+    </aside>
+
+    <main class="shell">
+      <header class="topbar">
+        <div>
+          <p class="eyebrow">Content Intelligence</p>
+          <h1>ดูว่าคู่แข่งโพสต์อะไร แล้วควรทำคอนเทนต์อะไรต่อ</h1>
+        </div>
+        <div class="status-pill" id="dataStatus">กำลังโหลดข้อมูล</div>
+      </header>
+
+      <section id="overview" class="kpi-grid" aria-label="Key metrics">
+        <article class="metric">
+          <span>โพสต์ 3 วันล่าสุด</span>
+          <strong id="totalPosts">-</strong>
+          <small>จาก Facebook pages ที่ติดตาม</small>
+        </article>
+        <article class="metric">
+          <span>เพจที่ active</span>
+          <strong id="activeBrands">-</strong>
+          <small>มีโพสต์ในช่วงล่าสุด</small>
+        </article>
+        <article class="metric">
+          <span>Engagement รวม</span>
+          <strong id="totalEngagement">-</strong>
+          <small>reactions + comments + shares</small>
+        </article>
+        <article class="metric">
+          <span>แบรนด์ที่เด่นสุด</span>
+          <strong id="topBrand">-</strong>
+          <small id="topBrandNote">ตามยอด engagement</small>
+        </article>
+      </section>
+
+      <section class="analysis-grid">
+        <article class="panel attention">
+          <div class="panel-heading">
+            <p class="eyebrow">Claude-style brief</p>
+            <h2>จุดที่ควรสนใจวันนี้</h2>
+          </div>
+          <div id="insights" class="insight-list"></div>
+        </article>
+
+        <article class="panel">
+          <div class="panel-heading">
+            <p class="eyebrow">Content mix</p>
+            <h2>หัวข้อที่กำลังถูกใช้</h2>
+          </div>
+          <div id="topicMix" class="topic-list"></div>
+        </article>
+      </section>
+
+      <section id="top-content" class="panel top-content-panel">
+        <div class="panel-heading row-heading">
+          <div>
+            <p class="eyebrow">Top 5 content</p>
+            <h2>คอนเทนต์ที่มาแรงในช่วง 3 วันล่าสุด</h2>
+          </div>
+          <span class="ranking-note">เรียงจาก reactions + comments + shares</span>
+        </div>
+        <div id="topPosts" class="top-post-list"></div>
+      </section>
+
+      <section id="competitors" class="panel">
+        <div class="panel-heading row-heading">
+          <div>
+            <p class="eyebrow">Competitor tracking</p>
+            <h2>เพจคู่แข่งที่มีความเคลื่อนไหว</h2>
+          </div>
+          <button id="refreshButton" type="button">Refresh API</button>
+        </div>
+        <div id="brandCards" class="brand-grid"></div>
+      </section>
+
+      <section id="hooks" class="panel">
+        <div class="panel-heading">
+          <p class="eyebrow">Hook vault</p>
+          <h2>Hook / มุมเปิดโพสต์ที่เก็บไปใช้ต่อได้</h2>
+        </div>
+        <div id="hookList" class="hook-list"></div>
+      </section>
+
+      <section id="ideas" class="panel">
+        <div class="panel-heading">
+          <p class="eyebrow">Next content ideas</p>
+          <h2>ข้อเสนอสำหรับคอนเทนต์ถัดไป</h2>
+        </div>
+        <div id="ideaBoard" class="idea-grid"></div>
+      </section>
+
+      <section class="panel">
+        <div class="panel-heading">
+          <p class="eyebrow">Recent posts</p>
+          <h2>โพสต์ล่าสุดที่ดึงมาได้</h2>
+        </div>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>วันที่</th>
+                <th>แบรนด์</th>
+                <th>Caption</th>
+                <th>Like</th>
+                <th>Comment</th>
+                <th>Share</th>
+                <th>Confidence</th>
+                <th>Link</th>
+              </tr>
+            </thead>
+            <tbody id="postRows"></tbody>
+          </table>
+        </div>
+      </section>
+
+      <section id="database" class="panel database-panel">
+        <div class="panel-heading">
+          <p class="eyebrow">Database contract</p>
+          <h2>Google Sheets ทำหน้าที่เป็นฐานข้อมูล</h2>
+        </div>
+        <div class="flow">
+          <span>Source rows</span>
+          <span>API / Worker</span>
+          <span>Upsert output tabs</span>
+          <span>Dashboard JSON</span>
+        </div>
+      </section>
+    </main>
+
+    <script src="app.js" defer></script>
+  </body>
+</html>
