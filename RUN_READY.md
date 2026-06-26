@@ -32,6 +32,13 @@ Verified deployed:
 GET https://kraikunsteam-crypto.github.io/content-dashboard/ -> 200
 ```
 
+Existing Google Sheets database/backup:
+
+```text
+Facebook Competitor Content Scan - 2026-06-25
+https://docs.google.com/spreadsheets/d/1yLVgZ-Ghe8ADDNaVtBno49f2Wky-fIFrxqaGCTqujeI/edit
+```
+
 ## Run Locally
 
 From the repository root:
@@ -68,6 +75,45 @@ GitHub Pages has no server API, so it uses:
 content-dashboard/data/sample-facebook-scan.json
 ```
 
+## Google Sheets Backup Sync
+
+Config:
+
+```text
+config/google-sheets-backup.json
+```
+
+Apps Script template:
+
+```text
+google-sheets/backup-webhook-apps-script.gs
+```
+
+Local sync command:
+
+```powershell
+node scripts/sync-google-sheets-backup.mjs
+```
+
+If `GOOGLE_SHEETS_BACKUP_WEBHOOK_URL` is not set, the script only builds:
+
+```text
+outputs/google-sheets-backup/backup-payload.json
+```
+
+When the webhook URL is set, the script updates the existing backup Sheet tabs:
+
+```text
+Backup Meta
+Channel Summary
+Posts
+Chart Data
+Method Notes
+Dashboard
+```
+
+`Dashboard` is rebuilt with charts from `Chart Data`.
+
 ## Deployment
 
 Workflow:
@@ -97,6 +143,15 @@ git -c safe.directory="E:/New folder (3)" push
 
 ## Not Done Yet
 
-- `POST /api/sync` is a placeholder.
-- Google Sheets writeback is not implemented in the local API yet.
+- Live writeback needs `GOOGLE_SHEETS_BACKUP_WEBHOOK_URL` or a working Google
+  Sheets connector session.
 - Exact Facebook metrics require an approved Meta/API/export source.
+
+Current session note: the Google Drive/Sheets connector returned an MCP
+handshake timeout, so live writeback was not performed through the connector in
+this run. The repo-side payload and Apps Script webhook path are ready.
+
+## Documentation Rule
+
+After each run, scan, sync, deploy, or database change, update this file plus
+`HANDOFF.md` and `RUNBOOK.md`.

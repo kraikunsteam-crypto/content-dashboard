@@ -34,8 +34,8 @@ with the same URL and API routes.
 
 - `GET /api/health` - server health check.
 - `GET /api/dashboard` - dashboard JSON.
-- `POST /api/sync` - placeholder for future Google Sheets sync; currently
-  returns `501`.
+- `POST /api/sync` - syncs to the existing Google Sheets backup when
+  `GOOGLE_SHEETS_BACKUP_WEBHOOK_URL` is configured.
 
 ## Data Source
 
@@ -49,6 +49,39 @@ If that file is missing, it falls back to:
 
 ```text
 data/sample-facebook-scan.json
+```
+
+## Existing Google Sheets Backup
+
+Backup/database Sheet:
+
+```text
+Facebook Competitor Content Scan - 2026-06-25
+https://docs.google.com/spreadsheets/d/1yLVgZ-Ghe8ADDNaVtBno49f2Wky-fIFrxqaGCTqujeI/edit
+```
+
+Config:
+
+```text
+../config/google-sheets-backup.json
+```
+
+Node sync route:
+
+```text
+POST /api/sync
+```
+
+CLI sync helper from repo root:
+
+```powershell
+node scripts/sync-google-sheets-backup.mjs
+```
+
+Live writeback requires:
+
+```text
+GOOGLE_SHEETS_BACKUP_WEBHOOK_URL
 ```
 
 On GitHub Pages, there is no local API server. The frontend automatically uses:
@@ -88,6 +121,6 @@ The dashboard is an advanced content analysis prototype. It includes:
 
 ## Production Notes
 
-For production reporting, connect a backend worker to Google Sheets, Meta Graph
-API, Meta Business Suite export, or another approved data source. Keep the
-frontend API contract stable so the UI can continue calling `/api/dashboard`.
+For production reporting, keep writing to the existing backup Sheet unless the
+user asks for a new file. Exact official metrics still require Meta Graph API,
+Meta Business Suite export, or another approved data source.

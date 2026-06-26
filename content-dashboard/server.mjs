@@ -2,6 +2,11 @@ import { createServer } from "node:http";
 import { readFile } from "node:fs/promises";
 import { extname, join, normalize } from "node:path";
 import { fileURLToPath } from "node:url";
+import {
+  buildGoogleSheetsBackupPayload,
+  loadBackupConfig,
+  postBackupPayload,
+} from "./googleSheetsBackup.mjs";
 
 const root = fileURLToPath(new URL(".", import.meta.url));
 const port = Number(process.env.PORT || 5177);
@@ -24,6 +29,42 @@ async function readDashboardData() {
   } catch {
     return await readFile(localSeed, "utf8");
   }
+}
+
+async function syncGoogleSheetsBackup() {
+  const config = await loadBackupConfig();
+  const data = JSON.parse(await readDashboardData());
+  const payload = buildGoogleSheetsBackupPayload({
+    config,
+    data,
+    sourcePath: config.localDataPath,
+  });
+
+  if (!process.env.GOOGLE_SHEETS_BACKUP_WEBHOOK_URL) {
+    return {
+      status: 503,
+      body: {
+        ok: false,
+        message: "GOOGLE_SHEETS_BACKUP_WEBHOOK_URL is not set.",
+        spreadsheetUrl: config.spreadsheetUrl,
+        tabs: payload.tabs.map((tab) => ({ name: tab.name, rows: tab.rows.length })),
+      },
+    };
+  }
+
+  const result = await postBackupPayload({
+    webhookUrl: process.env.GOOGLE_SHEETS_BACKUP_WEBHOOK_URL,
+    payload,
+  });
+
+  return {
+    status: 200,
+    body: {
+      ok: true,
+      spreadsheetUrl: config.spreadsheetUrl,
+      result,
+    },
+  };
 }
 
 async function serveStatic(pathname, res) {
@@ -69,14 +110,14 @@ const server = createServer(async (req, res) => {
   }
 
   if (url.pathname === "/api/sync") {
-    res.writeHead(501, { "content-type": "application/json; charset=utf-8" });
-    res.end(
-      JSON.stringify({
-        ok: false,
-        message:
-          "Connect this route to Google Sheets or Apps Script. Keep credentials on the server only.",
-      }),
-    );
+    try {
+      const syncResult = await syncGoogleSheetsBackup();
+      res.writeHead(syncResult.status, { "content-type": "application/json; charset=utf-8" });
+      res.end(JSON.stringify(syncResult.body));
+    } catch (error) {
+      res.writeHead(500, { "content-type": "application/json; charset=utf-8" });
+      res.end(JSON.stringify({ ok: false, message: error.message }));
+    }
     return;
   }
 

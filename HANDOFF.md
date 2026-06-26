@@ -44,8 +44,8 @@ The dashboard already has KPI cards, Top 5 trending posts, competitor cards,
 hook extraction, next content ideas, recent post table, metric confidence, and
 source Facebook post buttons.
 
-Current data is local-file based. Production Google Sheets sync is not connected
-yet.
+Current dashboard display reads local JSON/static JSON, and the existing Google
+Sheet below is the database/backup target for scan outputs and charts.
 
 GitHub repository:
 
@@ -58,6 +58,16 @@ GitHub Pages live dashboard:
 ```text
 https://kraikunsteam-crypto.github.io/content-dashboard/
 ```
+
+Existing Google Sheets database/backup:
+
+```text
+Facebook Competitor Content Scan - 2026-06-25
+https://docs.google.com/spreadsheets/d/1yLVgZ-Ghe8ADDNaVtBno49f2Wky-fIFrxqaGCTqujeI/edit
+```
+
+Do not create a new backup spreadsheet unless the user explicitly asks. Treat
+this Sheet as the database/backup target for competitor page updates.
 
 GitHub Pages deployment files:
 
@@ -128,11 +138,25 @@ Current local server routes:
 - `GET /api/health` - health check.
 - `GET /api/dashboard` - returns dashboard JSON from latest local scan output or
   sample fallback.
-- `POST /api/sync` - placeholder, currently returns `501`; this is where Google
-  Sheets or Apps Script sync should be connected later.
+- `POST /api/sync` - Node server route that sends the latest payload to the
+  existing backup Sheet when `GOOGLE_SHEETS_BACKUP_WEBHOOK_URL` is configured.
+  Without that env var it returns `503` with the target spreadsheet URL.
 
 Keep the frontend pointed at these API routes even after the backend switches
 from local JSON to Google Sheets.
+
+## Google Sheets Backup Sync Files
+
+- `config/google-sheets-backup.json` - canonical existing Sheet ID, URL, source
+  Sheet, tab names, stable keys, and dashboard URL.
+- `content-dashboard/googleSheetsBackup.mjs` - builds tab payloads for `Backup
+  Meta`, `Channel Summary`, `Posts`, `Chart Data`, and `Method Notes`.
+- `scripts/sync-google-sheets-backup.mjs` - CLI sync helper. It writes
+  `outputs/google-sheets-backup/backup-payload.json` when no webhook is set, or
+  POSTs to Google Sheets when `GOOGLE_SHEETS_BACKUP_WEBHOOK_URL` is set.
+- `google-sheets/backup-webhook-apps-script.gs` - Apps Script web app template
+  to paste/deploy against the existing backup Sheet.
+- `.env.example` - documents the webhook env var without storing secrets.
 
 ## Facebook Scan And Report Flow
 
@@ -291,12 +315,26 @@ channel_id + post_date + caption
 - `outputs/facebook-content-scan/build_report.mjs` - report builder.
 - `outputs/facebook-content-scan/cleaned_posts.json` - current dashboard data.
 
+## Required Documentation Habit
+
+Every future scan, sync, deploy, schema change, or database target change must
+update:
+
+- `RUN_READY.md` - short handoff for the next machine/agent.
+- `HANDOFF.md` - detailed current state and caveats.
+- `RUNBOOK.md` - operating sequence.
+- `DEPLOYMENT.md` - only when GitHub Pages/deploy changes.
+
 ## Known Caveats
 
-- `POST /api/sync` is not implemented yet.
-- The app has no full production Google Sheets read/write worker yet.
-- The current local dashboard can run without Google credentials because it
-  reads local JSON.
+- Live Google Sheets writeback requires either the Apps Script webhook URL in
+  `GOOGLE_SHEETS_BACKUP_WEBHOOK_URL` or a working Google Sheets connector
+  session.
+- In the current session, the Google Drive/Sheets connector returned an MCP
+  handshake timeout, so the live Sheet was not updated through the connector.
+  The generated payload path and Apps Script webhook path are ready.
+- The current local dashboard can run without Google credentials because
+  display still reads local JSON or static JSON fallback.
 - Runtime paths under `C:\Users\Kraik\.cache\...` are machine-specific.
 - Some Thai text in dashboard source files appears mojibake in the current
   checked-in files. If polishing the UI, restore those strings from a clean Thai
@@ -307,9 +345,9 @@ channel_id + post_date + caption
 ## Recommended Next Work
 
 1. Keep the frontend API contract stable: `GET /api/dashboard`.
-2. Replace local JSON reads in `content-dashboard/server.mjs` with backend
-   Google Sheets reads.
-3. Implement `POST /api/sync` as a server-side worker.
+2. Keep `content-dashboard/server.mjs` as the API boundary.
+3. Use `POST /api/sync` or `scripts/sync-google-sheets-backup.mjs` to back up
+   scan output into the existing Google Sheet.
 4. Store credentials only in environment variables or server-side secret
    storage.
 5. Upsert scan results into output tabs instead of blindly overwriting.

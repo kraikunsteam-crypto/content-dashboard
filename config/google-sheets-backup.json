@@ -1,0 +1,27 @@
+{
+  "role": "existing_google_sheet_database_and_backup",
+  "title": "Facebook Competitor Content Scan - 2026-06-25",
+  "spreadsheetId": "1yLVgZ-Ghe8ADDNaVtBno49f2Wky-fIFrxqaGCTqujeI",
+  "spreadsheetUrl": "https://docs.google.com/spreadsheets/d/1yLVgZ-Ghe8ADDNaVtBno49f2Wky-fIFrxqaGCTqujeI/edit",
+  "sourceSpreadsheetId": "1OVD3rwNVyT02ZfaUiNxtPh8V3KA9mvXkAQ6dyAhb4Zo",
+  "sourceSpreadsheetUrl": "https://docs.google.com/spreadsheets/d/1OVD3rwNVyT02ZfaUiNxtPh8V3KA9mvXkAQ6dyAhb4Zo/edit?gid=1497181589#gid=1497181589",
+  "sourceTab": "11A_Channel_Link_Library",
+  "localDataPath": "outputs/facebook-content-scan/cleaned_posts.json",
+  "sampleDataPath": "content-dashboard/data/sample-facebook-scan.json",
+  "tabs": {
+    "meta": "Backup Meta",
+    "summary": "Channel Summary",
+    "posts": "Posts",
+    "chartData": "Chart Data",
+    "methodNotes": "Method Notes"
+  },
+  "stableKeys": {
+    "channel": "channel_id",
+    "post": "channel_id + post_url",
+    "postFallback": "channel_id + post_date + caption"
+  },
+  "dashboard": {
+    "githubPagesUrl": "https://kraikunsteam-crypto.github.io/content-dashboard/",
+    "repositoryUrl": "https://github.com/kraikunsteam-crypto/content-dashboard"
+  }
+}

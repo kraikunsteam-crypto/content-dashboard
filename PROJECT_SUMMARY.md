@@ -51,10 +51,19 @@ data into decision-ready content signals.
 - recent post table with metric confidence and source post buttons
 - database contract section showing the API boundary
 
-Production caveat: exact official metrics still require a live Google Sheets
-sync and, ideally, Meta Graph API or an approved Meta export. Until then, the
-dashboard uses the latest local scan JSON and marks public-scrape metric
-confidence.
+Google Sheets backup/database target:
+
+```text
+Facebook Competitor Content Scan - 2026-06-25
+https://docs.google.com/spreadsheets/d/1yLVgZ-Ghe8ADDNaVtBno49f2Wky-fIFrxqaGCTqujeI/edit
+```
+
+The repo includes `config/google-sheets-backup.json`,
+`content-dashboard/googleSheetsBackup.mjs`,
+`scripts/sync-google-sheets-backup.mjs`, and
+`google-sheets/backup-webhook-apps-script.gs` so future runs can write scan
+outputs into that existing Sheet as the database/backup. Exact official metrics
+still require Meta Graph API or an approved Meta export.
 
 ## Data Source
 
@@ -95,14 +104,15 @@ Use stable keys such as:
 
 ## Next Step
 
-Replace the local JSON read in:
-
-```text
-content-dashboard/server.mjs
-```
-
-with real Google Sheets read/write logic, while keeping this frontend API route:
+Use the existing backup Sheet as the database target, then keep the dashboard
+API route stable:
 
 ```text
 GET /api/dashboard
+```
+
+Sync latest local data to the existing Sheet with:
+
+```text
+node scripts/sync-google-sheets-backup.mjs
 ```

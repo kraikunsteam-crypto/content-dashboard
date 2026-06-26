@@ -9,7 +9,8 @@ This repository is set up as a starter workspace for a project that uses:
 
 Read the project brief in [agent.md](agent.md), then read
 [RUNBOOK.md](RUNBOOK.md) for the current operating steps. For a concise
-machine-to-machine continuation note, read [HANDOFF.md](HANDOFF.md).
+machine-to-machine continuation note, read [RUN_READY.md](RUN_READY.md) and
+[HANDOFF.md](HANDOFF.md).
 
 Current app prototype:
 
@@ -66,6 +67,7 @@ Main files:
 - `styles.css` - visual styling
 - `app.js` - frontend rendering and analysis logic
 - `server.mjs` - local API/static server
+- `googleSheetsBackup.mjs` - builds the Google Sheets database/backup payload
 - `run-dashboard.ps1` - PowerShell runner that uses Node.js when available,
   otherwise starts a local PowerShell fallback preview server
 - `data/sample-facebook-scan.json` - portable sample data
@@ -75,11 +77,44 @@ Local API routes:
 
 - `GET /api/health`
 - `GET /api/dashboard`
-- `POST /api/sync` placeholder for Google Sheets sync
+- `POST /api/sync` syncs to the existing Google Sheets backup when
+  `GOOGLE_SHEETS_BACKUP_WEBHOOK_URL` is configured
 
 Dashboard UI includes KPI overview, Top 5 trending content, competitor cards,
 Hook vault, suggested content ideas, recent posts, and buttons that open the
 source Facebook posts.
+
+## Google Sheets Database / Backup
+
+Existing backup/database spreadsheet:
+
+```text
+Facebook Competitor Content Scan - 2026-06-25
+https://docs.google.com/spreadsheets/d/1yLVgZ-Ghe8ADDNaVtBno49f2Wky-fIFrxqaGCTqujeI/edit
+```
+
+The repo points to that existing Sheet through:
+
+```text
+config/google-sheets-backup.json
+```
+
+Do not create a new backup spreadsheet unless explicitly asked. Update the
+existing Sheet as the database/backup target.
+
+Sync helper:
+
+```powershell
+node scripts/sync-google-sheets-backup.mjs
+```
+
+The helper writes a payload for tabs and charts. To write into Google Sheets,
+set `GOOGLE_SHEETS_BACKUP_WEBHOOK_URL` to the Apps Script web app URL created
+from:
+
+```text
+google-sheets/backup-webhook-apps-script.gs
+```
 
 ## GitHub Pages Deploy
 
@@ -154,3 +189,12 @@ Use Google Sheets as the MVP database:
 
 For this dashboard, `server.mjs` is the API boundary. Later, replace the local
 JSON read with Google Sheets read/write and keep the frontend API call the same.
+
+## Documentation Rule
+
+After every meaningful run, deploy, sync, scan, or database change, update:
+
+- `RUN_READY.md` for short machine handoff
+- `HANDOFF.md` for detailed project state
+- `RUNBOOK.md` for operating steps
+- `DEPLOYMENT.md` when GitHub Pages or deploy behavior changes

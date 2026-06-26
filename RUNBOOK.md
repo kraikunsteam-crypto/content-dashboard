@@ -130,9 +130,9 @@ Current Facebook channels from the source tab:
 | CH-009 | COJIN | GINGEN | https://www.facebook.com/gingenthailand/?locale=th_TH |
 | CH-010 | COJIN | RANONG | https://www.facebook.com/Ranong.TH/ |
 
-## Latest Delivered Output
+## Existing Backup Database
 
-Created Google Sheet:
+Existing Google Sheets database/backup:
 
 ```text
 https://docs.google.com/spreadsheets/d/1yLVgZ-Ghe8ADDNaVtBno49f2Wky-fIFrxqaGCTqujeI/edit
@@ -144,12 +144,20 @@ Title:
 Facebook Competitor Content Scan - 2026-06-25
 ```
 
+Use this existing Sheet for competitor page backup/database work. Do not create
+a new backup Sheet unless the user explicitly asks for a fresh copy.
+
 Tabs:
 
 - `Dashboard`
 - `Channel Summary`
 - `Posts`
 - `Method Notes`
+
+The repo-side sync layer may also maintain:
+
+- `Backup Meta`
+- `Chart Data`
 
 Latest scan summary:
 
@@ -227,15 +235,74 @@ outputs/facebook-content-scan/workbook_inspect.ndjson
 ```
 
 16. Visually inspect `dashboard_preview.png`.
-17. Import the `.xlsx` as a native Google Sheets spreadsheet using Google Drive
-    import with `upload_mode = native_google_sheets`.
-18. Read back metadata and a few key ranges from the created Google Sheet:
+17. Update the existing backup/database Google Sheet, not a new spreadsheet:
+    `Facebook Competitor Content Scan - 2026-06-25`.
+18. Use either the Google Sheets connector or the repo sync helper:
+
+```powershell
+node scripts/sync-google-sheets-backup.mjs
+```
+
+19. If using the repo helper for a live write, set:
+
+```powershell
+$env:GOOGLE_SHEETS_BACKUP_WEBHOOK_URL = "<Apps Script web app URL>"
+```
+
+20. Read back metadata and a few key ranges from the existing Google Sheet:
     - `Dashboard!A1:H23`
     - `Posts!A1:P16`
 
 For a future recurring run, prefer updating the same output database spreadsheet
 with upserts instead of creating a new spreadsheet every time, unless the user
 asks for a fresh report copy.
+
+## Existing Google Sheets Backup Sync
+
+Canonical config:
+
+```text
+config/google-sheets-backup.json
+```
+
+Apps Script endpoint template:
+
+```text
+google-sheets/backup-webhook-apps-script.gs
+```
+
+Node sync helper:
+
+```text
+scripts/sync-google-sheets-backup.mjs
+```
+
+Data flow:
+
+```text
+outputs/facebook-content-scan/cleaned_posts.json
+-> content-dashboard/googleSheetsBackup.mjs
+-> Apps Script webhook or Google Sheets connector
+-> existing backup Sheet tabs and charts
+```
+
+Target tabs:
+
+- `Backup Meta` - sync metadata and target/source links.
+- `Channel Summary` - brand/channel summary table.
+- `Posts` - post fact table.
+- `Chart Data` - compact numeric table used by charts.
+- `Method Notes` - audit rules and data quality notes.
+- `Dashboard` - summary plus charts built from `Chart Data`.
+
+If no webhook URL is set, the helper writes a local payload only:
+
+```text
+outputs/google-sheets-backup/backup-payload.json
+```
+
+This is intentional so another machine/agent can inspect the exact data that
+would be written before enabling live writeback.
 
 ## Data Quality Rules
 
@@ -331,17 +398,29 @@ Backend/API behavior:
    `outputs/facebook-content-scan/cleaned_posts.json`.
 2. If that file is unavailable, it reads
    `content-dashboard/data/sample-facebook-scan.json`.
-3. `POST /api/sync` is a placeholder for the future Google Sheets sync worker.
+3. `POST /api/sync` sends the latest backup payload to the existing Google
+   Sheet when `GOOGLE_SHEETS_BACKUP_WEBHOOK_URL` is set; otherwise it returns
+   a `503` with setup instructions and the target Sheet URL.
 
-Future Google Sheets sync:
+Google Sheets sync:
 
 ```text
-Dashboard frontend -> server.mjs API -> Google Sheets source/output tabs
+Dashboard frontend -> server.mjs API -> existing Google Sheets backup database
 ```
 
 Keep Google credentials only on the API/server side. The frontend must keep
 calling the same API route even after the backend switches from local JSON to
 Google Sheets.
+
+## Documentation Rule For Every Run
+
+After every meaningful scan, sync, deploy, database update, or schema change,
+update these files before finishing:
+
+- `RUN_READY.md` - one-screen state for another machine or AI agent.
+- `HANDOFF.md` - detailed state, links, caveats, and next steps.
+- `RUNBOOK.md` - repeatable operating sequence.
+- `DEPLOYMENT.md` - only when GitHub Pages/deploy behavior changes.
 
 ## GitHub / Moving To Another Machine
 

@@ -110,8 +110,8 @@ try {
       }
 
       if ($path -eq "/api/sync") {
-        $body = [Text.Encoding]::UTF8.GetBytes('{"ok":false,"message":"Connect this route to Google Sheets or Apps Script. Keep credentials on the server only."}')
-        Send-Response $stream 501 "Not Implemented" "application/json; charset=utf-8" $body
+        $body = [Text.Encoding]::UTF8.GetBytes('{"ok":false,"message":"PowerShell fallback cannot sync. Run with Node.js and GOOGLE_SHEETS_BACKUP_WEBHOOK_URL to update the existing backup Google Sheet.","spreadsheetUrl":"https://docs.google.com/spreadsheets/d/1yLVgZ-Ghe8ADDNaVtBno49f2Wky-fIFrxqaGCTqujeI/edit"}')
+        Send-Response $stream 503 "Service Unavailable" "application/json; charset=utf-8" $body
         continue
       }
 

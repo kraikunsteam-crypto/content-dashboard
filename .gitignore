@@ -1,5 +1,10 @@
 node_modules/
 *.log
+.env
+.env.*
+!*example
+*service-account*.json
+google-credentials*.json
 
 # Generated scan/report artifacts
 outputs/facebook-content-scan/node_modules/
@@ -7,6 +12,7 @@ outputs/facebook-content-scan/*.xlsx
 outputs/facebook-content-scan/*.png
 outputs/facebook-content-scan/*.inspect.ndjson
 outputs/facebook-content-scan/workbook_inspect.ndjson
+outputs/google-sheets-backup/
 
 # OS/editor noise
 .DS_Store
